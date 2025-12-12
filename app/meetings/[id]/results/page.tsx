@@ -180,7 +180,7 @@ export default async function MeetingResultsPage({ params }: { params: Params })
                     borderRadius: 12,
                     border: "1px solid #eee",
                     display: "grid",
-                    // 左：選評（可変） / 右：俳句（220〜260px に固定）
+                    // 左：選評 / 右：俳句
                     gridTemplateColumns: "minmax(0, 1fr) minmax(220px, 260px)",
                     columnGap: 16,
                     alignItems: "stretch",
@@ -191,20 +191,24 @@ export default async function MeetingResultsPage({ params }: { params: Params })
                     style={{
                       border: "1px solid #eee",
                       borderRadius: 10,
-                      padding: 8,
-                      minHeight: 500,
-                      maxHeight: 500,
-                      overflowX: "auto", // 横スクロールで全部読める
-                      overflowY: "hidden",
+                      padding: 0,
+                      height: 500,          // 外枠の高さを固定
                       boxSizing: "border-box",
+                      overflow: "hidden",   // 外にはみ出さない
+                      display: "flex",
+                      justifyContent: "flex-end",
                     }}
                   >
-                    {/* 中身を flex 右寄せにして、縦書きテキストが右端に寄るようにする */}
+                    {/* この中が「スクロールする表示欄」 */}
                     <div
                       style={{
+                        height: "100%",
+                        width: "100%",
+                        padding: 8,
+                        boxSizing: "border-box",
+                        overflow: "auto",    // 枠の内側でスクロール
                         display: "flex",
                         justifyContent: "flex-end",
-                        minWidth: "100%",
                       }}
                     >
                       <div
