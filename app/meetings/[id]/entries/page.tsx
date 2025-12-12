@@ -44,7 +44,7 @@ export default async function EntriesPage({ params }: { params: Params }) {
             <div key={e.entry_no} style={{ border: "1px solid #ddd", borderRadius: 12, padding: 16 }}>
               <div style={{ fontWeight: 700, marginBottom: 8 }}>No.{e.entry_no}</div>
               <div style={{ border: "1px dashed #ccc", borderRadius: 12, padding: 12 }}>
-                <HaikuVertical text={e.body} fontSize={20} prefaceFontSize={14} minBodyChars={17} />
+                <HaikuVertical text={e.body} fontSize={20} prefaceFontSize={14} />
               </div>
             </div>
           ))}
