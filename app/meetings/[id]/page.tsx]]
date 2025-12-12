@@ -1,0 +1,77 @@
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+
+type Params = { id: string } | Promise<{ id: string }>;
+
+export default async function MeetingPage({ params }: { params: Params }) {
+  const { id } = await Promise.resolve(params);
+  const supabase = await createClient();
+
+  const { data: meeting, error } = await supabase
+    .from("meetings")
+    .select("id,title,theme,description,status,submission_limit,voting_rules")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    return (
+      <main style={{ padding: 24 }}>
+        <h1>句会</h1>
+        <pre style={{ whiteSpace: "pre-wrap" }}>{JSON.stringify(error, null, 2)}</pre>
+        <p><Link href="/meetings">← 句会一覧へ</Link></p>
+      </main>
+    );
+  }
+
+  return (
+    <main style={{ padding: 24 }}>
+      <p><Link href="/meetings">← 句会一覧へ</Link></p>
+
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginTop: 12 }}>{meeting.title}</h1>
+      <div style={{ marginTop: 12, lineHeight: 1.8 }}>
+        <div>兼題：{meeting.theme ?? "なし"}</div>
+        <div>状態：<b>{meeting.status}</b></div>
+        <div>投句上限：{meeting.submission_limit}</div>
+      </div>
+
+      {meeting.description && (
+        <p style={{ marginTop: 12, whiteSpace: "pre-wrap" }}>{meeting.description}</p>
+      )}
+
+      <hr style={{ margin: "16px 0" }} />
+
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <Link
+          href={`/meetings/${meeting.id}/submit`}
+          style={{
+            pointerEvents: meeting.status === "SUBMISSION_OPEN" ? "auto" : "none",
+            opacity: meeting.status === "SUBMISSION_OPEN" ? 1 : 0.4,
+            padding: "8px 12px",
+            border: "1px solid #ccc",
+            borderRadius: 8,
+            textDecoration: "none",
+          }}
+        >
+          投句する（締切まで修正可）
+        </Link>
+<Link
+  href={`/meetings/${meeting.id}/entries`}
+  style={{
+    padding: "8px 12px",
+    border: "1px solid #ccc",
+    borderRadius: 8,
+    textDecoration: "none",
+  }}
+>
+  伏せ句一覧を見る（縦書き）
+</Link>
+</div>
+
+      {meeting.status !== "SUBMISSION_OPEN" && (
+        <p style={{ marginTop: 12, color: "#666" }}>
+          ※投句受付中（SUBMISSION_OPEN）のときだけ投句できます。
+        </p>
+      )}
+    </main>
+  );
+}

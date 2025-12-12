@@ -1,58 +1,68 @@
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { AuthButton } from "@/components/auth-button";
-import { Hero } from "@/components/hero";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ConnectSupabaseSteps } from "@/components/tutorial/connect-supabase-steps";
-import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/lib/utils";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import Link from "next/link";
-import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: userRes } = await supabase.auth.getUser();
+  const user = userRes.user;
+
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <Hero />
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <h2 className="font-medium text-xl mb-4">Next steps</h2>
-            {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-          </main>
-        </div>
+    <main style={{ padding: 24, maxWidth: 720 }}>
+      <h1 style={{ fontSize: 28, fontWeight: 900 }}>オンライン句会</h1>
+      <p style={{ marginTop: 8, color: "#555", lineHeight: 1.8 }}>
+        俳号でログインして、投句・選句・結果発表までをオンラインで行うためのページです。
+      </p>
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
+      {user ? (
+        <>
+          <p style={{ marginTop: 16, color: "#333" }}>
+            ログイン中：<b>{user.email}</b>
           </p>
-          <ThemeSwitcher />
-        </footer>
-      </div>
+          <div style={{ marginTop: 16, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <Link
+              href="/meetings"
+              style={{
+                padding: "10px 16px",
+                borderRadius: 10,
+                border: "2px solid #111",
+                textDecoration: "none",
+                fontWeight: 900,
+              }}
+            >
+              句会一覧へ
+            </Link>
+            <Link
+              href="/protected/account"
+              style={{
+                padding: "10px 16px",
+                borderRadius: 10,
+                border: "1px solid #999",
+                textDecoration: "none",
+              }}
+            >
+              パスワード変更
+            </Link>
+          </div>
+        </>
+      ) : (
+        <div style={{ marginTop: 20 }}>
+          <Link
+            href="/login"
+            style={{
+              padding: "10px 16px",
+              borderRadius: 10,
+              border: "2px solid #111",
+              textDecoration: "none",
+              fontWeight: 900,
+            }}
+          >
+            ログイン（俳号＋パスワード）
+          </Link>
+        </div>
+      )}
     </main>
   );
 }
