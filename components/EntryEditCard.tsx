@@ -23,7 +23,7 @@ export function EntryEditCard(props: {
     <div style={{ border: "1px solid #ddd", borderRadius: 12, padding: 12 }}>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
         <div style={{ border: "1px dashed #ccc", borderRadius: 12, padding: 12 }}>
-          <HaikuVertical text={body} fontSize={18} prefaceFontSize={14} minBodyChars={17} />
+          <HaikuVertical text={body} fontSize={18} prefaceFontSize={14} />
         </div>
 
         <div style={{ flex: "1 1 420px", minWidth: 320 }}>
